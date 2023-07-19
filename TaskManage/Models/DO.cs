@@ -1,5 +1,4 @@
-﻿using DnsClient;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson.Serialization.Attributes;
 
 namespace TaskMange.Models
 {
@@ -9,7 +8,7 @@ namespace TaskMange.Models
         [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
         public string? _id { get; set; }
         public int Id { get; set; }
-        public string EmployeeCode { get; set; }
+        public string? EmployeeCode { get; set; }
         public string? EmployeeName { get; set; }
         public string? Email { get; set; }
         public int Role { get; set; }
@@ -94,18 +93,18 @@ namespace TaskMange.Models
     }
     public class TaskOrder
     {
-        public string taskid { get; set; }
+        public string? taskid { get; set; }
         public int orderindex { get; set; }
     }
     public class TaskAssign
     {
-        public string taskid { get; set; }
+        public string? taskid { get; set; }
         public int assignid { get; set; }
     }
     public class Task_Id
     {
-        public string taskname { get; set; }
-        public string description { get; set; }
+        public string? taskname { get; set; }
+        public string? description { get; set; }
         public int assignTo { get; set; }
     }
 }

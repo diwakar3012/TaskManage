@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
-using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 using TaskMange.Models;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace TaskMange.Controllers
 {
@@ -85,20 +81,12 @@ namespace TaskMange.Controllers
         {
             var Db = DAL.Connections();
             var collection = Db.GetCollection<TaskMasterModel>("TaskMaster");
-            var filter = new BsonDocument(){
-                {"Status",status},
-                { "$text" , new BsonDocument(){
-                        {"$search", search }, {"$caseSensitive", true}
-                    }
-                }
-            };
-            //var projection1 = new BsonDocument(){
-            //    {"_id",0},
-            //    { "Id",0 } 
-            //};
-            collection.Aggregate();
-            var temp = collection.Find(filter).Skip(pageindex * pagesize).Limit(pagesize).As<TaskMasterModel>().ToList(); //.Project(projection1)
-            return null;
+            collection.Indexes.CreateOne(Builders<TaskMasterModel>.IndexKeys.Text(x => x.Description));
+            var filter1 = Builders<TaskMasterModel>.Filter.Text(search);
+            var filter2 = Builders<TaskMasterModel>.Filter.Eq(x=>x.Status,status);
+            var filter = Builders<TaskMasterModel>.Filter.And(filter1,filter2);
+            var temp = collection.Find(filter).Skip((pageindex-1) * pagesize).Limit(pagesize).As<TaskMasterModel>().ToList(); 
+            return temp;
         }
     }
 }

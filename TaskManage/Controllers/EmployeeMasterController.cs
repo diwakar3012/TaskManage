@@ -42,7 +42,6 @@ namespace TaskMange.Controllers
                     currentIndex++;
                 }
                 obj.Id = currentIndex;
-                obj.Status = false;
                 EmployeeMasterCollection.InsertOne(obj);
                 return "Inserted";
             }

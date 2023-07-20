@@ -101,33 +101,44 @@ namespace TaskManage.Controllers
 
         // Task Master
         [HttpGet]
-        [Route("Task")]
-        public List<TaskMasterApiResult> Task_Id(int TaskId)
-        {
-            return TaskController.getTask(TaskId);
-        }
-        [HttpGet]
-        [Route("/task/assignto")]
-        public List<Result> TaskAssignTo(TaskAssign obj)
-        {
-            var res = TaskController.AssignToStatus(obj);
-            return res;
-        }
-
-        [HttpGet]
-        [Route("/task/order")]
-        public List<Result> TaskOrder(TaskOrder obj)
-        {
-            var res = TaskController.OrderStatus(obj);
-            return res;
-        }
-
-        [HttpGet]
-        [Route("/task")]
-        public List<TaskMasterModel> Task(int status, int pageindex, int pagesize, string search)
+        [Route("/Task")]
+        public Root Task(int status, int pageindex, int pagesize, string search)
         {
             var res = TaskController.TaskFindWithPage(status, search, pageindex, pagesize);
             return res;
         }
+
+        [HttpGet]
+        [Route("Task/TaskId")]
+        public List<TaskMasterApiResult> Task_Id() //int TaskId
+        {
+            return TaskController.getTask(); //TaskId
+        }
+
+        [HttpPost]
+        [Route("/task")]
+        public Result InsertTaskRecord(TaskInsert obj)
+        {
+            var res = TaskController.InsertIntoTask(obj);
+            return res;
+        }
+
+        [HttpPost]
+        [Route("/task/assignto")]
+        public Result InsertRecordToTaskAssign(TaskAssign obj)
+        {
+            var res = TaskController.InsertIntoAssignTo(obj);
+            return res;
+        }
+
+        [HttpPost]
+        [Route("/task/order")]
+        public Result TInsertRecordToTaskOrder(TaskOrder obj)
+        {
+            var res = TaskController.InsertIntoOrder(obj);
+            return res;
+        }
+
+        
     }
 }

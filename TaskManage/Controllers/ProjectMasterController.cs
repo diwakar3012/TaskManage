@@ -40,7 +40,6 @@ namespace TaskMange.Controllers
                     currentIndex++;
                 }
                 obj.Id = currentIndex;
-                obj.IsDelete = false;
                 ProjectMasterCollection.InsertOne(obj);
                 return "Inserted";
             }

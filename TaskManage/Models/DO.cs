@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
+using ThirdParty.Json.LitJson;
 
 namespace TaskMange.Models
 {
@@ -25,7 +26,7 @@ namespace TaskMange.Models
 
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
-        public bool IsDelete { get; set; }
+        public bool IsDelete { get; set; } = false;
     }
     public class TaskMasterModel
     {
@@ -43,7 +44,7 @@ namespace TaskMange.Models
         public DateTime UpdatedDate { get; set; }
         public int OrderIndex { get; set; }
         public DateTime TargetDate { get; set; }
-        public bool IsDelete { get; set; }
+        public bool IsDelete { get; set; } = false;
     }
     public class TaskAssignModel
     {
@@ -78,34 +79,96 @@ namespace TaskMange.Models
 
     public class TaskMasterApiResult
     {
+        [BsonId]
+        [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
+        public string? _id { get; set; }
+        public int Id { get; set; }
         public string? Title { get; set; }
         public DateTime CreatedDate { get; set; }
-        public int CreatedBy { get; set; }
         public bool Status { get; set; }
+        public int CreatedBy { get; set; }
         public int AssignTo { get; set; }
+        //public int[] CreatedBy { get; set; }
+        //public int[] AssignTo { get; set; }
         public DateTime TargetDate { get; set; }
         public string? Description { get; set; }
         public List<Activity> Activity { get; set; }
     }
     public class Result
     {
-        public int Status { get; set; }
+        public string Status { get; set; }
     }
     public class TaskOrder
     {
-        public string? taskid { get; set; }
-        public int orderindex { get; set; }
+        public int TaskId { get; set; }
+        public int OrderIndex { get; set; }
     }
     public class TaskAssign
     {
-        public string? taskid { get; set; }
-        public int assignid { get; set; }
+        public int TasKId { get; set; }
+        public int AssignTo { get; set; }
     }
-    public class Task_Id
+    public class TaskInsert
     {
-        public string? taskname { get; set; }
-        public string? description { get; set; }
-        public int assignTo { get; set; }
+        public int ProjectId { get; set; }
+        public string? TaskName { get; set; } //tm title
+        public string? Description { get; set; } //tm desc
+        public int AssignTo { get; set; } //ta assign
+    }
+
+
+    public class Card
+    {
+        public string id { get; set; }
+        public string title { get; set; }
+        public string createdDate { get; set; }
+        public string createdBy { get; set; }
+        public string assignTo { get; set; }
+        public string targetDate { get; set; }
+    }
+
+    public class List1
+    {
+        public string id { get; set; }
+        public string title { get; set; }
+        public List<Card> cards { get; set; }
+    }
+
+    public class List2
+    {
+        public string id { get; set; }
+        public string title { get; set; }
+        public List<Card> cards { get; set; }
+    }
+
+    public class List3
+    {
+        public string id { get; set; }
+        public string title { get; set; }
+        public List<Card> cards { get; set; }
+    }
+
+    public class List4
+    {
+        public string id { get; set; }
+        public string title { get; set; }
+        public List<Card> cards { get; set; }
+    }
+
+    public class Lists
+    {
+        public List1 list1 { get; set; }
+
+        public List2 list2 { get; set; }
+
+        public List3 list3 { get; set; }
+
+        public List4 list4 { get; set; }
+    }
+
+    public class Root
+    {
+        public Lists lists { get; set; }
     }
 }
 

@@ -1,4 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
+using Nest;
+using System.Runtime.Serialization;
 using ThirdParty.Json.LitJson;
 
 namespace TaskMange.Models
@@ -13,7 +15,16 @@ namespace TaskMange.Models
         public string? EmployeeName { get; set; }
         public string? Email { get; set; }
         public int Role { get; set; }
-        public bool Status { get; set; }
+        public int Status { get; set; }
+        public int IsDelete { get; set; } = 0;
+    }
+    public class EmpModelforUpdate
+    {
+        public int Id { get; set; }
+        public string? EmployeeName { get; set; }
+        public string? Email { get; set; }
+        public int Role { get; set; }
+        public int Status { get; set; }
     }
     public class ProjectMasterModel
     {
@@ -23,11 +34,16 @@ namespace TaskMange.Models
         public int Id { get; set; }
         public string? ProjectCode { get; set; }
         public string? ProjectName { get; set; }
-
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
-        public bool IsDelete { get; set; } = false;
+        public int IsDelete { get; set; } = 0;
     }
+    public class ProjectModel
+    {
+        public int Id { get; set; }
+        public string? ProjectName { get; set; }
+    }
+
     public class TaskMasterModel
     {
         [BsonId]
@@ -44,7 +60,13 @@ namespace TaskMange.Models
         public DateTime UpdatedDate { get; set; }
         public int OrderIndex { get; set; }
         public DateTime TargetDate { get; set; }
-        public bool IsDelete { get; set; } = false;
+        public int IsDelete { get; set; } = 0;
+    }
+    public class EmpModel
+    {
+        public string? EmployeeName { get; set; }
+        public string? Email { get; set; }
+        public int Role { get; set; }
     }
     public class TaskAssignModel
     {
@@ -85,18 +107,20 @@ namespace TaskMange.Models
         public int Id { get; set; }
         public string? Title { get; set; }
         public DateTime CreatedDate { get; set; }
-        public bool Status { get; set; }
-        public int CreatedBy { get; set; }
-        public int AssignTo { get; set; }
-        //public int[] CreatedBy { get; set; }
-        //public int[] AssignTo { get; set; }
+        public int Status { get; set; }
+        //public int CreatedBy { get; set; }
+        //public int AssignTo { get; set; }
+        public int[] CreatedBy { get; set; }
+        public int[] AssignTo { get; set; }
         public DateTime TargetDate { get; set; }
         public string? Description { get; set; }
         public List<Activity> Activity { get; set; }
     }
-    public class Result
+    public class Result1
     {
         public string Status { get; set; }
+        public string Message { get; set; } = "Done";
+        
     }
     public class TaskOrder
     {
@@ -113,18 +137,26 @@ namespace TaskMange.Models
         public int ProjectId { get; set; }
         public string? TaskName { get; set; } //tm title
         public string? Description { get; set; } //tm desc
+        public DateTime? TargetDate { get; set; }
         public int AssignTo { get; set; } //ta assign
     }
-
+    public class StatusChange
+    {
+        public int TaskId { get; set; }
+        public int Status { get; set; }
+    }
 
     public class Card
     {
-        public string id { get; set; }
-        public string title { get; set; }
-        public string createdDate { get; set; }
-        public string createdBy { get; set; }
-        public string assignTo { get; set; }
-        public string targetDate { get; set; }
+        [BsonId]
+        [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
+        public string? _id { get; set; }
+        public int Id { get; set; }
+        public string? Title { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public int[] CreatedBy { get; set; }
+        public int[] AssignTo { get; set; }
+        public DateTime TargetDate { get; set; }
     }
 
     public class List1
@@ -169,6 +201,16 @@ namespace TaskMange.Models
     public class Root
     {
         public Lists lists { get; set; }
+    }
+    public class TaskUpdateModel
+    {
+        public int Id { get; set; }
+        //public int ProjectMasterId { get; set; }
+        //public string? TaskId {get;set;}
+        public string? Title {get;set;}
+        public string? Description {get;set;}
+        public int Status {get;set;}
+        public DateTime TargetDate {get;set;}
     }
 }
 

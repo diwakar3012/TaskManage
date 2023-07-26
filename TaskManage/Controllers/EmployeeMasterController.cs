@@ -19,7 +19,7 @@ namespace TaskMange.Controllers
             {
                 var Db = DAL.Connections();
                 var EmployeeMasterCollection = Db.GetCollection<EmployeeMasterModel>("EmployeeMaster");
-                var filter = Builders<EmployeeMasterModel>.Filter.Eq(rec => rec.Status, false);
+                var filter = Builders<EmployeeMasterModel>.Filter.Eq(rec => rec.IsDelete, 0);
                 List<EmployeeMasterModel> Documents = EmployeeMasterCollection.Find(filter).ToList();
                 return Documents;
             }
@@ -28,8 +28,10 @@ namespace TaskMange.Controllers
                 return null;
             }
         }
-        public static string InsertDocument(EmployeeMasterModel obj)
+        public static Result1 InsertDocument(EmployeeMasterModel obj)
         {
+            Result1 res = new Result1();
+            res.Status = "Failed";
             try
             {
                 var Db = DAL.Connections();
@@ -42,16 +44,39 @@ namespace TaskMange.Controllers
                     currentIndex++;
                 }
                 obj.Id = currentIndex;
-                EmployeeMasterCollection.InsertOne(obj);
-                return "Inserted";
+                if (currentIndex <= 9)
+                {
+                    obj.EmployeeCode = "EG00" + currentIndex.ToString();
+                }
+                if (currentIndex >= 10) { 
+                    obj.EmployeeCode = "EG0" + currentIndex.ToString();
+                }
+                if (currentIndex >= 100)
+                {
+                    obj.EmployeeCode = "EG" + currentIndex.ToString();
+                }
+                var flag = EmployeeMasterCollection.Find(Builders<EmployeeMasterModel>.Filter.Eq("Email", obj.Email)).ToList().Count();
+                if (flag == 0)
+                {
+                    EmployeeMasterCollection.InsertOne(obj);
+                    res.Status = "Success";
+                }
+                else
+                {
+                    res.Status = "Failed";
+                    res.Message = "Email Already Exists!";
+                }
             }
             catch (Exception e)
             {
-                return e.Message.ToString();
+                res.Status = "Failed";
+                res.Message = "Error";
             }
+            return res;
         }
-        public static string DeleteDocument(int pos)
+        public static Result1 DeleteDocument(int pos)
         {
+            Result1 res = new Result1();
             try
             {
                 var Db = DAL.Connections();
@@ -60,31 +85,47 @@ namespace TaskMange.Controllers
                 var DelRec = EmployeeMasterCollection.Find(filter).FirstOrDefault();
                 if (DelRec != null)
                 {
-                    var update = Builders<EmployeeMasterModel>.Update.Set(rec=>rec.Status,true);
+                    var update = Builders<EmployeeMasterModel>.Update.Set(rec=>rec.IsDelete,1);
                     EmployeeMasterCollection.UpdateOne(filter,update);
+                    res.Status = "Success";
                 }
-                return "Deleted";
+                else
+                {
+                    res.Status = "Failed";
+                    res.Message = "No Records Found";
+                }
             }
             catch (Exception e)
             {
-                return e.Message.ToString();
+                res.Status = "Failed";
             }
+            return res;
         }
-        public static string UpdateDocument(EmployeeMasterModel obj) 
+        public static Result1 UpdateDocument(EmployeeMasterModel obj) 
         {
+            Result1 res = new Result1();
             try
             {
                 var Db = DAL.Connections();
                 var EmployeeMasterCollection = Db.GetCollection<EmployeeMasterModel>("EmployeeMaster");
-                var filter = Builders<EmployeeMasterModel>.Filter.Eq(p => p.Id, obj.Id);
-                var update = Builders<EmployeeMasterModel>.Update.Set(p => p.EmployeeCode, obj.EmployeeCode).Set(p => p.EmployeeName, obj.EmployeeName).Set(p => p.Email, obj.Email).Set(p => p.Role, obj.Role);//.Set(p => p.Status,obj.Status);
-                EmployeeMasterCollection.UpdateOne(filter, update);
-                return "Updated";
+                var filter = Builders<EmployeeMasterModel>.Filter.And(Builders<EmployeeMasterModel>.Filter.Eq(p => p.Id, obj.Id),Builders<EmployeeMasterModel>.Filter.Eq(p => p.IsDelete, 0));
+                if (EmployeeMasterCollection.Find(filter).ToList().Count() != 0) {
+                    var update = Builders<EmployeeMasterModel>.Update.Set(p => p.EmployeeName, obj.EmployeeName).Set(p => p.Email, obj.Email).Set(p => p.Role, obj.Role).Set(p => p.Status, obj.Status);
+                    EmployeeMasterCollection.UpdateOne(filter, update);
+                    res.Status = "Success";
+                }
+                else
+                {
+                    res.Status = "Failed";
+                    res.Message = "No Records Found";
+                }
             }
-            catch(Exception e) 
-            { 
-                return e.Message.ToString();
+            catch (Exception e) 
+            {
+                res.Status = "Failed";
+                res.Status = "Error";
             }
+            return res;
         }
     }
 }
